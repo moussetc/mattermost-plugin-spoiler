@@ -1,47 +1,49 @@
-# Sample Plugin
+# Spoiler Plugin
 
-This plugin serves as a starting point for writing a Mattermost plugin. Feel free to base your own plugin off this repository.
+This plugin creates a slash command to display spoiler messages (blurred on the webapp, tagged native apps).
 
-## Getting Started
-Shallow clone the repository to a directory matching your plugin name:
-```
-git clone --depth 1 https://github.com/mattermost/mattermost-plugin-sample com.example.my-plugin
+## Usage
+The `/spoiler This is a spoiler` command will make a post which will be appear
+-  As *blurred text* on the webapp client, which can be unblurred with a click. 
+- Surrounded by a *<SPOILER> tag* on the native apps (Android, Apple).
+
+## Compatibility
+- This plugin is only compatible with **Mattermost versions 5.2 and higher.**
+- **Android and Apple apps will display spoilers in a degraded mode** (see above) as the plugin system does not yet support customization of the native apps.
+
+## Installation
+1. Download the [release package](https://github.com/moussetc/mattermost-plugin-spoiler/releases).
+2. Use the Mattermost `System Console > Plugins Management > Management` page to upload the package
+3. **Activate the plugin** in the `System Console > Plugins Management > Management` page
+
+## Manual configuration
+If you need to enable & configure this plugin directly in the Mattermost configuration file `config.json`, for example if you are doing a [High Availability setup](https://docs.mattermost.com/deployment/cluster.html), you can use the following lines:
+```json
+ "PluginSettings": {
+        // [...]
+        "PluginStates": {
+            // [...]
+            "com.github.moussetc.mattermost.plugin.spoiler": {
+                "Enable": true
+            },
+        }
+    }
 ```
 
-Edit `plugin.json` with your `id`, `name`, and `description`:
-```
-{
-    "id": "com.example.my-plugin",
-    "name": "My Plugin",
-    "description": "A plugin to enhance Mattermost."
-}
-```
-
-Build your plugin:
+## Development
+Build the plugin with the following command:
 ```
 make
 ```
+This will produce a single plugin package (with support for multiple architectures) in `dist/com.github.moussetc.mattermost.plugin.spoiler-X.X.X.tar.gz`
 
-This will produce a single plugin file (with support for multiple architectures) for upload to your Mattermost server:
-
-```
-dist/com.example.my-plugin.tar.gz
-```
-
-There is a build target to automate deploying and enabling the plugin to your server, but it requires configuration and [http](https://httpie.org/) to be installed:
+To automate deploying and enabling the plugin to your server, add the following lines at the beginning of the Makefile (it requires [http](https://httpie.org/) to be installed) and configure your admin login&password:
 ```
 export MM_SERVICESETTINGS_SITEURL=http://localhost:8065
 export MM_ADMIN_USERNAME=admin
 export MM_ADMIN_PASSWORD=password
+```
+and use this command:
+```
 make deploy
 ```
-
-Alternatively, if you are running your `mattermost-server` out of a sibling directory by the same name, use the `deploy` target alone to  unpack the files into the right directory. You will need to restart your server and manually enable your plugin.
-
-In production, deploy and upload your plugin via the [System Console](https://about.mattermost.com/default-plugin-uploads).
-
-## Q&A
-
-### How do I make a server-only or web app-only plugin?
-
-Simply delete the `server` or `webapp` folders and remove the corresponding sections from `plugin.json`. The build scripts will skip the missing portions automatically.

@@ -28,9 +28,9 @@ export default class SpoilerPostType extends React.PureComponent {
             style.filter = 'blur(4px)'
 	}
         const post = {...this.props.post};
-        const message = post.message || '';
+	// Don't use post.message directly as it has a special formatting used by the native apps
+        const message = post.props.CustomSpoilerRawMessage || '';
         const formattedText = messageHtmlToComponent(formatText(message));
-
 	const props = {
 		onClick: this.revealSpoiler,
 		style: style,

@@ -39,7 +39,11 @@ func (p *Plugin) OnActivate() error {
 
 // ExecuteCommand post a custom-type spoiler post, the webapp part of the plugin will display it right
 func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
-	text := strings.TrimSpace((strings.Replace(args.Command, "/"+trigger, "", 1)))
+	rawText := strings.TrimSpace((strings.Replace(args.Command, "/"+trigger, "", 1)))
+
+	// Native apps (Android, Apple...) do not support plugins yet,
+	// so by default, the spoiler is displayed surrounded by spoiler tags
+	text := "**[SPOILER]**\n\n" + rawText + "\n**[/SPOILER]**"
 
 	// A slash command can not return a post with a custom type
 	// so the spoiler post is created manually and the command
@@ -49,6 +53,10 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 		ChannelId: args.ChannelId,
 		Message:   text,
 		Type:      customPostType,
+		// The webapp plugin will use the RawMessage and display it blurred (without tags)
+		Props: map[string]interface{}{
+			"CustomSpoilerRawMessage": rawText,
+		},
 	})
 	if err != nil {
 		return nil, err

@@ -13,6 +13,9 @@ BUNDLE_NAME ?= $(PLUGIN_ID)-$(PLUGIN_VERSION).tar.gz
 # all, the default target, tests, builds and bundles the plugin.
 all: check-style test dist
 
+# Travis CI
+travis: check-style test-coverage dist
+
 # apply propagates the plugin id into the server/ and webapp/ folders as required.
 .PHONY: apply
 apply:
@@ -146,6 +149,13 @@ endif
 ifneq ($(HAS_WEBAPP),)
 	cd webapp && $(NPM) run fix;
 endif
+
+.PHONY: test-coverage
+test-coverage: $(SRC) $(TEST)
+ifneq ($(HAS_SERVER),)
+	cd server && $(GO) test -race -coverprofile=coverage.txt -covermode=atomic
+endif
+
 
 # clean removes all build artifacts
 .PHONY: clean

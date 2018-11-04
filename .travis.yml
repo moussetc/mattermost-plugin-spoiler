@@ -1,10 +1,25 @@
+dist: trusty
+sudo: false
 language: go
 go:
-  - "1.11.x"
+- "1.11.x"
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 install:
   - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 script:
-  - make check-style
-  - make test
+  - make travis
+
+deploy:
+  provider: releases
+  api_key:
+    secure: P8TO2RYnYWBtu/BzuFBN6FvMipmg4naJ/JD69PhURSimWz9degEB9EfKIcDX8qZ5IzozBrZ2zozo022w1SelqI4eBnzrwKV8IgpWfcSecl86lt9tgQ0dMcSORn5yPc7LOJf92j9/bl/EItGgmQuahXWxk1Yy+nAObOunEidBvZxVy8bxcefeQvmsloi5Z0e9zKj23KzIjQhebysgLg7B/yelgY3cBIOkf/IIpC68AMdJ7FTOWDIun6gVqz3snb/Qy+s+ObQ//x0Pa1PZYTYdnR7RpM2YRdL83PP0hAu/lXfIiXT2XFTiiiBRnxUddFOUkXLC6nhzNHTAR330piov+Owm4Rf6z3LDW4bsmgCEyqdM9wWKAGWKbruT0zDySOT6pmnDT6Z1PzZvJT4vAUv7UiutdJZPczPXDi25yWvVeM13r8pAV0i8f0eOrgTON3LC+fomV857EAy1r2FTgB1EXSfWnaaR4GrHf7HULZqHkIsCuaHPd22rptMs0x61j9Lo7BuAlVxkvNmGW2g6sNSRFU/xYKjEh0rndnqb8h4zHpG4pb3QOS9iVB7A6HGokG76vP8Itp+z6L+TypGCuNEoYAGbH83Bpgp1MTjpaMTzNZrII3VdTgHb4PxGTPwRs9tqM9cLIZSBdAItR29XREgBdtPUdH3/0gwto73ndFvS8QM=
+  file: dist/*
+  file_glob: true
+  skip_cleanup: true
+  on:
+    repo: moussetc/mattermost-plugin-spoiler
+    tags: true

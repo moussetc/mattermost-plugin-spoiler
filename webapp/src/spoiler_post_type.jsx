@@ -10,34 +10,51 @@ export default class SpoilerPostType extends React.PureComponent {
     }
 
     constructor(props) {
-	super(props);
-	this.state = {
-            displaySpoiler: false
-	};
-	
-	this.revealSpoiler = () => {
-	    if (!this.state.displaySpoiler) {
-                this.setState( { displaySpoiler: true });	
-	    }
-	}
+        super(props);
+        this.state = {
+            displaySpoiler: false,
+        };
+
+        this.revealSpoiler = () => {
+            if (!this.state.displaySpoiler) {
+                this.setState({displaySpoiler: true});
+            }
+        };
+
+        this.renderNormal = (message) => {
+            const formattedText = messageHtmlToComponent(formatText(message));
+            return (
+                <div>{formattedText}</div>
+            );
+        };
+
+        this.renderSpoiler = (message) => {
+            // don't display real text so emoji, url, image... are not visible
+            const yaourt = Array.join(Array.from(message).
+                map((c) => ((/\s/).test(c) ? c : '_')), '');
+            const lines = yaourt.split(/\r?\n/).map((line) => messageHtmlToComponent(line));
+            const divProps = {
+                onClick: this.revealSpoiler,
+                style: {background: this.props.theme.centerChannelColor},
+                title: 'Reveal spoiler',
+            };
+            return (
+                <div>
+                    {lines.map((line, index) => {
+                        return <div key={index}><span {...divProps}>{line}<br/></span></div>;
+                    })}
+                </div>
+            );
+        };
     }
 
     render() {
-        const style = {};
-	if (!this.state.displaySpoiler) {
-            style.filter = 'blur(4px)'
-	}
+        // Don't use post.message directly as it has a special formatting used by the native apps
         const post = {...this.props.post};
-	// Don't use post.message directly as it has a special formatting used by the native apps
         const message = post.props.CustomSpoilerRawMessage || '';
-        const formattedText = messageHtmlToComponent(formatText(message));
-	const props = {
-		onClick: this.revealSpoiler,
-		style: style,
-		title: this.state.displaySpoiler ? '' : 'Reveal spoiler',
-	};
-        return (
-            <div {...props}>{formattedText}</div>
-        );
+        if (!this.state.displaySpoiler) {
+            return this.renderSpoiler(message);
+        }
+        return this.renderNormal(message);
     }
 }

@@ -227,7 +227,10 @@
       2,
       "except-parens"
     ],
-    "no-confusing-arrow": 2,
+    "no-confusing-arrow": [
+      2,
+      { "allowParens": true }
+    ],
     "no-console": 2,
     "no-const-assign": 2,
     "no-constant-condition": 2,

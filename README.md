@@ -1,11 +1,11 @@
 # Spoiler Plugin
 
-This plugin creates a slash command to display spoiler messages (blurred on the webapp, tagged native apps).
+This plugin creates a slash command to display spoiler messages.
 
 ## Usage
-The `/spoiler This is a spoiler` command will make a post which will be appear
--  As *blurred text* on the webapp client, which can be unblurred with a click. 
-- Surrounded by a *<SPOILER> tag* on the native apps (Android, Apple).
+The `/spoiler This is a spoiler` command will make a post which will be appear:
+- As **'redacted text'** (unreadable text highlight) on the **webapp client**, which can be displayed with a click. 
+- Surrounded by a **[SPOILER]** tag on the **native apps (Android, Apple)**.
 
 ## Compatibility
 - This plugin is only compatible with **Mattermost versions 5.2 and higher.**

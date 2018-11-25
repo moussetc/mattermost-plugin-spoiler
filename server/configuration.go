@@ -1,7 +1,9 @@
 package main
 
 import (
-//	"github.com/pkg/errors"
+	"reflect"
+
+	"github.com/pkg/errors"
 )
 
 // configuration captures the plugin's external configuration as exposed in the Mattermost server
@@ -53,6 +55,13 @@ func (p *Plugin) setConfiguration(configuration *Configuration) {
 	defer p.configurationLock.Unlock()
 
 	if configuration != nil && p.configuration == configuration {
+		// Ignore assignment if the configuration struct is empty. Go will optimize the
+		// allocation for same to point at the same memory address, breaking the check
+		// above.
+		if reflect.ValueOf(*configuration).NumField() == 0 {
+			return
+		}
+
 		panic("setConfiguration called with the existing configuration")
 	}
 
@@ -61,7 +70,7 @@ func (p *Plugin) setConfiguration(configuration *Configuration) {
 
 // OnConfigurationChange is invoked when configuration changes may have been made.
 func (p *Plugin) OnConfigurationChange() error {
-	/*var configuration = new(Configuration)
+	var configuration = new(Configuration)
 
 	// Load the public configuration fields from the Mattermost server configuration.
 	if err := p.API.LoadPluginConfiguration(configuration); err != nil {
@@ -69,6 +78,5 @@ func (p *Plugin) OnConfigurationChange() error {
 	}
 
 	p.setConfiguration(configuration)
-	*/
 	return nil
 }

@@ -1,15 +1,14 @@
 # Spoiler Plugin
 
-This plugin creates a slash command to display spoiler messages.
+This plugin creates a slash command to display spoiler messages in a non-spoiling way.
 
 ## Usage
 The `/spoiler This is a spoiler` command will make a post which will be appear:
 - As **'redacted text'** (unreadable text highlight) on the **webapp client**, which can be displayed with a click. 
-- Surrounded by a **[SPOILER]** tag on the **native apps (Android, Apple)**.
+- As a 'Show spoiler' button on **native apps (Android, Apple)**, which displays the spoiler as a private (ephemeral) message when clicked.
 
 ## Compatibility
-- This plugin is only compatible with **Mattermost versions 5.2 and higher.**
-- **Android and Apple apps will display spoilers in a degraded mode** (see above) as the plugin system does not yet support customization of the native apps.
+- This plugin is only compatible with **Mattermost versions 5.3 and higher.**
 
 ## Installation
 1. Download the [release package](https://github.com/moussetc/mattermost-plugin-spoiler/releases).

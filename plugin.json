@@ -16,6 +16,24 @@
     "settings_schema": {
         "header": "",
         "footer": "",
-        "settings": []
+        "settings": [
+	    {
+	        "key": "SpoilerMode",
+	        "display_name": "Spoiler display mode",
+		"help_text": "This setting only applies to the web client (native apps like the Android app don't support plugin customization). Native apps will always use the button mode.",
+		"type": "radio",
+		"default": "button",
+		"options": [
+		    {
+	                "value": "button",
+		        "display_name": "Show spoiler button"
+		    },
+		    {
+		        "value": "redacted",
+		        "display_name": "Highlight ('redacted' look)"
+		    }
+		]
+	    }
+	]
     }
 }

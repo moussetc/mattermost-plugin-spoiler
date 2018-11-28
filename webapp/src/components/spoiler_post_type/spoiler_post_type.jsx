@@ -7,17 +7,18 @@ export default class SpoilerPostType extends React.PureComponent {
     static propTypes = {
         post: PropTypes.object.isRequired,
         theme: PropTypes.object.isRequired,
+        spoilerMode: PropTypes.string.isRequired,
     }
 
     constructor(props) {
         super(props);
         this.state = {
-            displaySpoiler: false,
+            displaySpoilerContent: false,
         };
 
         this.revealSpoiler = () => {
-            if (!this.state.displaySpoiler) {
-                this.setState({displaySpoiler: true});
+            if (!this.state.displaySpoilerContent) {
+                this.setState({displaySpoilerContent: true});
             }
         };
 
@@ -52,9 +53,9 @@ export default class SpoilerPostType extends React.PureComponent {
         // Don't use post.message directly as it has a special formatting used by the native apps
         const post = {...this.props.post};
         const message = post.props.CustomSpoilerRawMessage || '';
-        if (!this.state.displaySpoiler) {
-            return this.renderSpoiler(message);
+        if (this.state.displaySpoilerContent) {
+            return this.renderNormal(message);
         }
-        return this.renderNormal(message);
+        return this.renderSpoiler(message);
     }
 }

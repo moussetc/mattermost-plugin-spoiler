@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -44,39 +43,14 @@ func (p *Plugin) OnActivate() error {
 
 // ServeHTTP serve the post action to display an ephemeral spoiler
 func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
-	p.API.LogDebug("New request:", "Host", r.Host, "RequestURI", r.RequestURI, "Method", r.Method)
 	switch r.URL.Path {
 	case "/show":
 		p.showEphemeral(w, r)
 	case "/config":
-		p.handleConfig(w, r)
+		p.handleConfigRequest(w, r)
 	default:
 		http.NotFound(w, r)
 	}
-}
-
-// Return config settings needed by frontend
-func (p *Plugin) handleConfig(w http.ResponseWriter, r *http.Request) {
-	configuration := p.getConfiguration()
-
-	var response = struct {
-		SpoilerMode string `json:"spoilerMode"`
-	}{
-		SpoilerMode: configuration.SpoilerMode,
-	}
-
-	responseJSON, _ := json.Marshal(response)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseJSON)
-}
-
-func (p *Plugin) emitConfigChange() {
-	configuration := p.getConfiguration()
-
-	p.API.PublishWebSocketEvent("config_change", map[string]interface{}{
-		"spoilerMode": configuration.SpoilerMode,
-	}, &model.WebsocketBroadcast{})
 }
 
 // ExecuteCommand post a custom-type spoiler post, the webapp part of the plugin will display it right
@@ -126,6 +100,10 @@ func (p *Plugin) getPostAttachments(siteURL, pluginID, spoilerText string) []*mo
 // Show spoiler content as an ephemeral message
 func (p *Plugin) showEphemeral(w http.ResponseWriter, r *http.Request) {
 	request := model.PostActionIntegrationRequesteFromJson(r.Body)
+	if request == nil || request.Context == nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	response := &model.PostActionIntegrationResponse{
 		EphemeralText: request.Context["spoiler"].(string),
 	}

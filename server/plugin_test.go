@@ -3,12 +3,18 @@ package main
 import (
 	"github.com/mattermost/mattermost-server/model"
 
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/mattermost/mattermost-server/plugin"
 	"github.com/mattermost/mattermost-server/plugin/plugintest"
 	"github.com/mattermost/mattermost-server/plugin/plugintest/mock"
+
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestExecuteCommand(t *testing.T) {
@@ -88,4 +94,68 @@ func TestExecuteCommandErrorOnPost(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, errCreatePost, *err)
 	assert.Nil(t, response)
+}
+
+func TestServeHTTP(t *testing.T) {
+	spoilerMode := "kjqshdlkjhfk"
+	spoiler := "hahahahaha"
+	for name, test := range map[string]struct {
+		RequestURL         string
+		RequestBody        string
+		ExpectedStatusCode int
+		ExpectedHeader     http.Header
+		ExpectedbodyString string
+	}{
+		"Show spoiler request": {
+			RequestURL:         "/show",
+			RequestBody:        `{"Context":{"spoiler":"` + spoiler + `"}}`,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedHeader:     http.Header{"Content-Type": []string{"application/json"}},
+			ExpectedbodyString: `{"update":null,"ephemeral_text":"` + spoiler + `"}`,
+		},
+		"Show invalid spoiler request": {
+			RequestURL:         "/show",
+			RequestBody:        "",
+			ExpectedStatusCode: http.StatusBadRequest,
+			ExpectedHeader:     http.Header{},
+			ExpectedbodyString: "",
+		},
+		"Config request": {
+			RequestURL:         "/config",
+			RequestBody:        "",
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedHeader:     http.Header{"Content-Type": []string{"application/json"}},
+			ExpectedbodyString: `{"spoilerMode":"` + spoilerMode + `"}`,
+		},
+		"InvalidRequestURL": {
+			RequestURL:         "/not_found",
+			RequestBody:        "",
+			ExpectedStatusCode: http.StatusNotFound,
+			ExpectedHeader:     http.Header{"Content-Type": []string{"text/plain; charset=utf-8"}, "X-Content-Type-Options": []string{"nosniff"}},
+			ExpectedbodyString: "404 page not found\n",
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			assert := assert.New(t)
+
+			plugin := &Plugin{}
+			config := &Configuration{SpoilerMode: spoilerMode}
+			plugin.setConfiguration(config)
+
+			w := httptest.NewRecorder()
+			r := httptest.NewRequest("GET", test.RequestURL, strings.NewReader(test.RequestBody))
+			plugin.ServeHTTP(nil, w, r)
+
+			result := w.Result()
+			require.NotNil(t, result)
+
+			bodyBytes, err := ioutil.ReadAll(result.Body)
+			require.Nil(t, err)
+			bodyString := string(bodyBytes)
+
+			assert.Equal(test.ExpectedStatusCode, result.StatusCode)
+			assert.Equal(test.ExpectedbodyString, bodyString)
+			assert.Equal(test.ExpectedHeader, result.Header)
+		})
+	}
 }

@@ -1,19 +1,29 @@
-# Spoiler Plugin
+# Spoiler Plugin [![Build Status](https://api.travis-ci.com/moussetc/mattermost-plugin-spoiler.svg?branch=master)](https://travis-ci.com/moussetc/mattermost-plugin-spoiler)
 
 This plugin creates a slash command to display spoiler messages in a non-spoiling way.
-
-## Usage
-The `/spoiler This is a spoiler` command will make a post which will be appear:
-- As **'redacted text'** (unreadable text highlight) on the **webapp client**, which can be displayed with a click. 
-- As a 'Show spoiler' button on **native apps (Android, Apple)**, which displays the spoiler as a private (ephemeral) message when clicked.
 
 ## Compatibility
 - This plugin is only compatible with **Mattermost versions 5.3 and higher.**
 
-## Installation
+## Usage
+
+Type `/spoiler` followed by your spoiler, then post your message. (The spoiler can be on more than one line, it can contain emojis, URLs, images, etc. All will be hidden.)
+
+Two display modes are available for spoiler messages:
+- **Spoiler button** mode:  
+![Spoiler button demo](assets/demo_button.gif)
+
+- **Redacted** mode:  
+![Redacted spoiler demo](assets/demo_redacted.gif)  
+***This mode is not available on native apps like Android.*** Native apps do not yet support plugin customization, so for now they will use the *Spoiler button* mode.
+
+## Installation and configuration
 1. Download the [release package](https://github.com/moussetc/mattermost-plugin-spoiler/releases).
-2. Use the Mattermost `System Console > Plugins Management > Management` page to upload the package
-3. **Activate the plugin** in the `System Console > Plugins Management > Management` page
+2. Use the Mattermost `System Console > Plugins > Management` page to upload the package
+3. **Activate the plugin** in the `System Console > Plugins > Management` page
+4. Choose the display mode: go to the System Console > Plugins > Spoiler Command, select the mode and save the plugin's settings.  
+![Plugin settings](assets/demo_config.png) 
+
 
 ## Manual configuration
 If you need to enable & configure this plugin directly in the Mattermost configuration file `config.json`, for example if you are doing a [High Availability setup](https://docs.mattermost.com/deployment/cluster.html), you can use the following lines:
@@ -23,7 +33,8 @@ If you need to enable & configure this plugin directly in the Mattermost configu
         "PluginStates": {
             // [...]
             "com.github.moussetc.mattermost.plugin.spoiler": {
-                "Enable": true
+                "Enable": true,
+		"SpoilerMode": "button"
             },
         }
     }

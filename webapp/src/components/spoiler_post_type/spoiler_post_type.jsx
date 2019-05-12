@@ -31,8 +31,8 @@ export default class SpoilerPostType extends React.PureComponent {
 
         this.renderSpoiler = (message) => {
             // don't display real text so emoji, url, image... are not visible
-            const yaourt = Array.join(Array.from(message).
-                map((c) => ((/\s/).test(c) ? c : '_')), '');
+            const yaourt = Array.from(message).
+                map((c) => ((/\s/).test(c) ? c : '_')).join('');
             const lines = yaourt.split(/\r?\n/).map((line) => messageHtmlToComponent(line));
             const divProps = {
                 onClick: this.revealSpoiler,

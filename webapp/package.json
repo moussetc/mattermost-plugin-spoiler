@@ -27,6 +27,7 @@
     "webpack-cli": "^3.3.2"
   },
   "dependencies": {
+    "core-js": "^2.6.5",
     "mattermost-redux": "^5.10.0",
     "react": "^16.8.6",
     "react-redux": "^7.0.3",

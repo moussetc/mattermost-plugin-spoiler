@@ -60,7 +60,7 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 	// A slash command can not return a post with a custom type
 	// so the spoiler post is created manually and the command
 	// response is to do nothing
-	_, err := p.API.CreatePost(p.getSpoilerPost(args.UserId, args.ChannelId, rawText))
+	_, err := p.API.CreatePost(p.getSpoilerPost(args.UserId, args.ChannelId, args.RootId, rawText))
 	if err != nil {
 		return nil, err
 	}
@@ -68,11 +68,12 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 	return &model.CommandResponse{}, nil
 }
 
-func (p *Plugin) getSpoilerPost(userId, channelId, spoiler string) *model.Post {
+func (p *Plugin) getSpoilerPost(userId, channelId, rootId, spoiler string) *model.Post {
 	return &model.Post{
 		UserId:    userId,
 		ChannelId: channelId,
 		Type:      customPostType,
+		RootId:    rootId,
 		// The webapp plugin will use the RawMessage for the custom display
 		Props: map[string]interface{}{
 			customPostProp: spoiler,

@@ -98,6 +98,7 @@ func TestExecuteCommandErrorOnPost(t *testing.T) {
 
 func TestServeHTTP(t *testing.T) {
 	spoilerMode := "kjqshdlkjhfk"
+	integrationURL := "sefjkdgfdd"
 	spoiler := "hahahahaha"
 	for name, test := range map[string]struct {
 		RequestURL         string
@@ -125,7 +126,7 @@ func TestServeHTTP(t *testing.T) {
 			RequestBody:        "",
 			ExpectedStatusCode: http.StatusOK,
 			ExpectedHeader:     http.Header{"Content-Type": []string{"application/json"}},
-			ExpectedbodyString: `{"spoilerMode":"` + spoilerMode + `"}`,
+			ExpectedbodyString: `{"spoilerMode":"` + spoilerMode + `","integrationURL":"` + integrationURL + `"}`,
 		},
 		"InvalidRequestURL": {
 			RequestURL:         "/not_found",
@@ -139,7 +140,7 @@ func TestServeHTTP(t *testing.T) {
 			assert := assert.New(t)
 
 			plugin := &Plugin{}
-			config := &Configuration{SpoilerMode: spoilerMode}
+			config := &Configuration{SpoilerMode: spoilerMode, IntegrationURL: integrationURL}
 			plugin.setConfiguration(config)
 
 			w := httptest.NewRecorder()

@@ -35,6 +35,7 @@ If you need to enable & configure this plugin directly in the Mattermost configu
             "com.github.moussetc.mattermost.plugin.spoiler": {
                 "Enable": true,
 		"SpoilerMode": "button"
+		"IntegrationURL": ""
             },
         }
     }

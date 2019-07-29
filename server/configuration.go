@@ -12,7 +12,8 @@ import (
 //
 // May be changed at anytime, beware concurrent calls by asynchronous hooks
 type Configuration struct {
-	SpoilerMode string
+	SpoilerMode    string
+	IntegrationURL string
 }
 
 // Clone shallow copies the configuration.
@@ -72,9 +73,11 @@ func (p *Plugin) OnConfigurationChange() error {
 func (p *Plugin) handleConfigRequest(w http.ResponseWriter, r *http.Request) {
 	configuration := p.getConfiguration()
 	var response = struct {
-		SpoilerMode string `json:"spoilerMode"`
+		SpoilerMode    string `json:"spoilerMode"`
+		IntegrationURL string `json:"integrationURL"`
 	}{
-		SpoilerMode: configuration.SpoilerMode,
+		SpoilerMode:    configuration.SpoilerMode,
+		IntegrationURL: configuration.IntegrationURL,
 	}
 	responseJSON, _ := json.Marshal(response)
 	w.Header().Set("Content-Type", "application/json")

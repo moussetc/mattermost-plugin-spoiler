@@ -33,6 +33,14 @@
 		        "display_name": "Highlight ('redacted' look)"
 		    }
 		]
+	    },
+	    {
+	    	"key": "IntegrationURL",
+		"display_name": "Integration URL",
+		"help_text": "Internal URL used by the MM server to call the plugin. Only use if using the SiteURL MM setting is not possible (for example if you get 509 HTTP errors), leave empty otherwise)",
+		"placeholder": "http://localhost:8065",
+		"type": "text",
+		"default": ""
 	    }
 	]
     }

@@ -32,10 +32,7 @@
     "beforeEach": true
   },
   "settings": {
-    "import/resolver": "webpack",
-    "react": {
-      "version": "detect"
-    }
+    "import/resolver": "webpack"
   },
   "rules": {
     "array-bracket-spacing": [
@@ -230,10 +227,7 @@
       2,
       "except-parens"
     ],
-    "no-confusing-arrow": [
-      2,
-      { "allowParens": true }
-    ],
+    "no-confusing-arrow": 2,
     "no-console": 2,
     "no-const-assign": 2,
     "no-constant-condition": 2,
@@ -638,5 +632,42 @@
         "onlyEquality": false
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.tsx", "**/*.ts"],
+      "extends": "plugin:@typescript-eslint/recommended",
+      "rules": {
+        "@typescript-eslint/no-var-requires": 0,
+        "@typescript-eslint/prefer-interface": 0,
+        "@typescript-eslint/indent": [
+          2,
+          4,
+          {
+            "SwitchCase": 0
+          }
+        ],
+        "@typescript-eslint/no-use-before-define": [
+          2,
+          {
+            "classes": false,
+            "functions": false,
+            "variables": false
+          }
+        ],
+        "@typescript-eslint/camelcase": [
+          2,
+          {
+            "properties": "never"
+          }
+        ],
+        "react/jsx-filename-extension": [
+          1,
+          {
+            "extensions": [".jsx", ".tsx"]
+          }
+        ]
+      }
+    }
+  ]
 }

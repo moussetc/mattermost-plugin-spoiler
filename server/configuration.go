@@ -3,8 +3,9 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"reflect"
 
-	"github.com/mattermost/mattermost-server/model"
+	"github.com/mattermost/mattermost-server/v5/model"
 	"github.com/pkg/errors"
 )
 
@@ -47,6 +48,10 @@ func (p *Plugin) setConfiguration(configuration *Configuration) {
 	defer p.configurationLock.Unlock()
 
 	if configuration != nil && p.configuration == configuration {
+		if reflect.ValueOf(*configuration).NumField() == 0 {
+			return
+		}
+
 		panic("setConfiguration called with the existing configuration")
 	}
 

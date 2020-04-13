@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 	"sync"
 
-	"github.com/mattermost/mattermost-server/model"
-	"github.com/mattermost/mattermost-server/plugin"
+	"github.com/mattermost/mattermost-server/v5/model"
+	"github.com/mattermost/mattermost-server/v5/plugin"
 )
 
 // Plugin that adds a slash command to hide spoilers
@@ -104,7 +103,7 @@ func (p *Plugin) getPostAttachments(siteURL, integrationURL, pluginID, spoilerTe
 
 // Show spoiler content as an ephemeral message
 func (p *Plugin) showEphemeral(w http.ResponseWriter, r *http.Request) {
-	request := model.PostActionIntegrationRequesteFromJson(r.Body)
+	request := model.PostActionIntegrationRequestFromJson(r.Body)
 	if request == nil || request.Context == nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -114,5 +113,5 @@ func (p *Plugin) showEphemeral(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_, _ = io.WriteString(w, response.ToJson())
+	_, _ = w.Write(response.ToJson())
 }

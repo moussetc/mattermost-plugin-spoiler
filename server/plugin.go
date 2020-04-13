@@ -76,21 +76,17 @@ func (p *Plugin) getSpoilerPost(userId, channelId, rootId, spoiler string) *mode
 		// The webapp plugin will use the RawMessage for the custom display
 		Props: map[string]interface{}{
 			customPostProp: spoiler,
-			"attachments":  p.getPostAttachments(*p.API.GetConfig().ServiceSettings.SiteURL, p.getConfiguration().IntegrationURL, manifest.Id, spoiler),
+			"attachments":  p.getPostAttachments(spoiler),
 		},
 	}
 }
 
-func (p *Plugin) getPostAttachments(siteURL, integrationURL, pluginID, spoilerText string) []*model.SlackAttachment {
-	baseURL := strings.TrimSuffix(integrationURL, "/")
-	if baseURL == "" {
-		baseURL = siteURL
-	}
+func (p *Plugin) getPostAttachments(spoilerText string) []*model.SlackAttachment {
 	actions := []*model.PostAction{{
 		Name: "Show spoiler",
 		Type: model.POST_ACTION_TYPE_BUTTON,
 		Integration: &model.PostActionIntegration{
-			URL:     fmt.Sprintf("%s/plugins/%s/show", siteURL, pluginID),
+			URL:     fmt.Sprintf("/plugins/%s/show", manifest.Id),
 			Context: model.StringInterface{"spoiler": spoilerText},
 		},
 	},

@@ -5,14 +5,18 @@ const manifest = JSON.parse(`
     "id": "com.github.moussetc.mattermost.plugin.spoiler",
     "name": "Spoiler Command",
     "description": "This plugin defines a /spoiler command.",
+    "homepage_url": "https://github.com/moussetc/mattermost-plugin-spoiler/",
+    "support_url": "https://github.com/moussetc/mattermost-plugin-spoiler/issues",
+    "icon_path": "assets/icon.png",
     "version": "2.1.4",
+    "min_server_version": "5.12.0",
     "server": {
         "executables": {
             "linux-amd64": "server/dist/plugin-linux-amd64",
             "darwin-amd64": "server/dist/plugin-darwin-amd64",
             "windows-amd64": "server/dist/plugin-windows-amd64.exe"
         },
-        "executable": ""
+        "executable": "server/dist/plugin-freebsd-amd64"
     },
     "webapp": {
         "bundle_path": "webapp/dist/main.js"
@@ -38,14 +42,6 @@ const manifest = JSON.parse(`
                         "value": "redacted"
                     }
                 ]
-            },
-            {
-                "key": "IntegrationURL",
-                "display_name": "Integration URL",
-                "type": "text",
-                "help_text": "Internal URL used by the MM server to call the plugin. Only use if using the SiteURL MM setting is not possible (for example if you get 509 HTTP errors), leave empty otherwise)",
-                "placeholder": "http://localhost:8065",
-                "default": ""
             }
         ]
     }

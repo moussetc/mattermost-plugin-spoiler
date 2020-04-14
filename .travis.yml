@@ -2,13 +2,11 @@ dist: trusty
 sudo: false
 language: go
 go:
-- 1.11.x
+- "1.12.x"
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 install:
-- curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-script:
-- make travis
+- make 
 deploy:
   provider: releases
   api_key:
@@ -22,3 +20,5 @@ deploy:
 env:
   global:
   - secure: d6Ewypip4jAyoS3dh2CrXWWWFYdfNtOVQ6STHXR8VjfIGXlQDxzyD3CXC3YklCBvtwwy6fnntTgiPlkBjXWxfAGcaRB2RUBibfNe2HsyozYVcFS4Dk8M5sLNTIeHGuHXolhy7ds0beian9chOO6We8PghY9y4DnjZPHrwN3sKCVJLgxsoBklcOxZ4XrNNou6j8HzgD/kLz7u4MZR7wtG7Ds6SoX71DCvjFuKFr96/qggwo574IU9cKqEnFMNiD5jlygMYtCx9e9fbtOf5VkiaI3siH0G648flg9FHoI1yAb5r+2NEbgdcoxoHQ0FmZMQm9iXTxhkKD2l+j3pMvnFWhl8E8lNBH/ZSckStuKXT6YSNH7nz1ACyf/iDYyE+JRcWk6uo9SswaMNZEPryRxuNaXKXzyK+ga7nNu4EHQI5+AtUCg2VdMmgFHFeHT5ApeX572rGHKOUh8rbVFkyCM9WGnt9+AiD/Q/49g1lbrDNPSCyi4VKHl+53TmMuW8ESgkSc0Sn+87SjkF/XgAOchXhF0WjN+G5VRGN+aJKf+CqQ4hD0lC777qNYaZaLd0qYq8Kw+G0cggCqtKVDMAGd3M8seJ7gEnb7Lq39VgErgmTw5qGomgH5KKSY7Dp+PUkjamV+XJBxM37UmfZo3ZDueJUZdA5jBP6gjzZzQ1689jT5o=
+  jobs:
+  - GO111MODULE=on

@@ -3,7 +3,8 @@
 This plugin creates a slash command to display spoiler messages in a non-spoiling way.
 
 ## Compatibility
-- This plugin is only compatible with **Mattermost versions 5.3 and higher.**
+- for Mattermost 5.14 or higher: use v3.X.X release (needed for relative integration URLs)
+- for Mattermost 5.3 to 5.13: use v2.X.X
 
 ## Usage
 

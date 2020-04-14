@@ -8,8 +8,8 @@ const manifest = JSON.parse(`
     "homepage_url": "https://github.com/moussetc/mattermost-plugin-spoiler/",
     "support_url": "https://github.com/moussetc/mattermost-plugin-spoiler/issues",
     "icon_path": "assets/icon.png",
-    "version": "2.1.4",
-    "min_server_version": "5.12.0",
+    "version": "3.0.0",
+    "min_server_version": "5.14.0",
     "server": {
         "executables": {
             "linux-amd64": "server/dist/plugin-linux-amd64",

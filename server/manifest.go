@@ -5,5 +5,5 @@ var manifest = struct {
 	Version string
 }{
 	Id:      "com.github.moussetc.mattermost.plugin.spoiler",
-	Version: "2.1.3",
+	Version: "2.1.4",
 }

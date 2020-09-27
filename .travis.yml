@@ -7,8 +7,10 @@ env:
 - GO111MODULE="on"
 after_success:
 - bash <(curl -s https://codecov.io/bash)
-install:
+before_install:
+- npm install -g eslint@7.10.0
 - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.24.0
+install:
 - make 
 deploy:
   provider: releases

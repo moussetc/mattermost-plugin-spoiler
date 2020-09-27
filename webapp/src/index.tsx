@@ -1,6 +1,6 @@
-import { Store, Action } from 'redux';
+import {Store, Action} from 'redux';
 
-import { GlobalState } from 'mattermost-redux/types/store';
+import {GlobalState} from 'mattermost-redux/types/store';
 
 import manifest from './manifest';
 import SpoilerPostType from './components/spoiler_post_type';
@@ -8,11 +8,11 @@ import {
     getConfig,
     websocketConfigChange,
 } from './actions';
-import { spoilerMode } from './selectors';
+import {spoilerMode} from './selectors';
 import reducer from './reducer';
 
 // eslint-disable-next-line import/no-unresolved
-import { PluginRegistry } from './types/mattermost-webapp';
+import {PluginRegistry} from './types/mattermost-webapp';
 
 export default class Plugin {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
@@ -44,7 +44,7 @@ export default class Plugin {
         // Be alerted if the plugin configuration change
         registry.registerWebSocketEventHandler(
             'custom_' + manifest.id + '_config_change',
-            (message: any) => store.dispatch(websocketConfigChange(message))
+            (message: any) => store.dispatch(websocketConfigChange(message)),
         );
 
         // Fetch the current config whenever we recover an internet connection.

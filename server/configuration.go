@@ -98,7 +98,10 @@ func (p *Plugin) handleConfigRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	responseJSON, _ := json.Marshal(response)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(responseJSON)
+	_, err := w.Write(responseJSON)
+	if err != nil {
+		p.API.LogError(manifest.Id + ": Error in handleConfigRequest: " + err.Error())
+	}
 }
 
 // emitConfigChange alerts the frontend that the configuration has changed

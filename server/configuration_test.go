@@ -42,7 +42,7 @@ func TestOnConfigurationChange(t *testing.T) {
 	p := Plugin{}
 
 	p.SetAPI(api)
-	p.OnConfigurationChange()
+	_ = p.OnConfigurationChange()
 
 	config := p.getConfiguration()
 	assert.NotNil(t, config)
@@ -50,12 +50,12 @@ func TestOnConfigurationChange(t *testing.T) {
 
 	apiError := &plugintest.API{}
 
-	errAPI := errors.New("LoadPluginConfiguration failed")
+	errAPI := errors.New("loadPluginConfiguration failed")
 	apiError.On("LoadPluginConfiguration", mock.AnythingOfType("*main.configuration")).Return(errAPI)
 
 	p.SetAPI(apiError)
 	err := p.OnConfigurationChange()
 
 	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), errApi.Error())
+	assert.Contains(t, err.Error(), errAPI.Error())
 }

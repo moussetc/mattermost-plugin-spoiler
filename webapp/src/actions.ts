@@ -1,9 +1,9 @@
-import { getConfig as getServerConfig } from 'mattermost-redux/selectors/entities/general';
+import {getConfig as getServerConfig} from 'mattermost-redux/selectors/entities/general';
 
-import { id as pluginId } from './manifest';
-import { CONFIG_CHANGE } from './action_types';
+import {id as pluginId} from './manifest';
+import {CONFIG_CHANGE} from './action_types';
 
-export const getConfig = () => async (dispatch, getState) => {
+export const getConfig = ():any => async (dispatch: Function, getState: Function) => {
     fetch(getPluginServerRoute(getState()) + '/config').then((r) => r.json()).then((r) => {
         dispatch({
             type: CONFIG_CHANGE,
@@ -12,7 +12,7 @@ export const getConfig = () => async (dispatch, getState) => {
     });
 };
 
-export const getPluginServerRoute = (state) => {
+export const getPluginServerRoute = (state: any) => {
     const config = getServerConfig(state);
 
     let basePath = '/';
@@ -27,7 +27,7 @@ export const getPluginServerRoute = (state) => {
     return basePath + '/plugins/' + pluginId;
 };
 
-export const websocketConfigChange = (message) => (dispatch) => dispatch({
+export const websocketConfigChange = (message: any):any => (dispatch: Function) => dispatch({
     type: CONFIG_CHANGE,
     data: message.data,
 });

@@ -142,7 +142,7 @@ func TestServeHTTP(t *testing.T) {
 			assert := assert.New(t)
 
 			plugin := &Plugin{}
-			config := &Configuration{SpoilerMode: spoilerMode}
+			config := &configuration{SpoilerMode: spoilerMode}
 			plugin.setConfiguration(config)
 
 			w := httptest.NewRecorder()

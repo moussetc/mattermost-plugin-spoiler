@@ -12,7 +12,7 @@ import (
 func TestConfigurationSetterGetter(t *testing.T) {
 	p := Plugin{}
 
-	originalConfig := &Configuration{
+	originalConfig := &configuration{
 		SpoilerMode: "fkjsdlkjdsvqkj",
 	}
 
@@ -28,12 +28,12 @@ func TestConfigurationSetterGetter(t *testing.T) {
 func TestOnConfigurationChange(t *testing.T) {
 	api := &plugintest.API{}
 
-	originalConfig := &Configuration{
+	originalConfig := &configuration{
 		SpoilerMode: "fkjsdlkjdsvqkj",
 	}
 
-	api.On("LoadPluginConfiguration", mock.AnythingOfType("*main.Configuration")).Return(nil).Run(func(args mock.Arguments) {
-		config := args.Get(0).(*Configuration)
+	api.On("LoadPluginConfiguration", mock.AnythingOfType("*main.configuration")).Return(nil).Run(func(args mock.Arguments) {
+		config := args.Get(0).(*configuration)
 		config.SpoilerMode = originalConfig.SpoilerMode
 	})
 
@@ -50,8 +50,8 @@ func TestOnConfigurationChange(t *testing.T) {
 
 	apiError := &plugintest.API{}
 
-	errApi := errors.New("LoadPluginConfiguration failed")
-	apiError.On("LoadPluginConfiguration", mock.AnythingOfType("*main.Configuration")).Return(errApi)
+	errAPI := errors.New("LoadPluginConfiguration failed")
+	apiError.On("LoadPluginConfiguration", mock.AnythingOfType("*main.configuration")).Return(errAPI)
 
 	p.SetAPI(apiError)
 	err := p.OnConfigurationChange()

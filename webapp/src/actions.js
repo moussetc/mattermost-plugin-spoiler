@@ -1,7 +1,7 @@
-import {getConfig as getServerConfig} from 'mattermost-redux/selectors/entities/general';
+import { getConfig as getServerConfig } from 'mattermost-redux/selectors/entities/general';
 
-import {id as pluginId} from './manifest';
-import {CONFIG_CHANGE} from './action_types';
+import { id as pluginId } from './manifest';
+import { CONFIG_CHANGE } from './action_types';
 
 export const getConfig = () => async (dispatch, getState) => {
     fetch(getPluginServerRoute(getState()) + '/config').then((r) => r.json()).then((r) => {

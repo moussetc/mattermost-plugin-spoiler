@@ -114,7 +114,7 @@ func TestServeHTTP(t *testing.T) {
 			RequestBody:        `{"Context":{"spoiler":"` + spoiler + `"}}`,
 			ExpectedStatusCode: http.StatusOK,
 			ExpectedHeader:     http.Header{"Content-Type": []string{"application/json"}},
-			ExpectedbodyString: `{"update":null,"ephemeral_text":"` + spoiler + `"}`,
+			ExpectedbodyString: `{"update":null,"ephemeral_text":"` + spoiler + `","skip_slack_parsing":false}`,
 		},
 		"Show invalid spoiler request": {
 			RequestURL:         "/show",

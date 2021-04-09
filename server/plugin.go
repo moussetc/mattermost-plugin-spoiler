@@ -67,12 +67,12 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 	return &model.CommandResponse{}, nil
 }
 
-func (p *Plugin) getSpoilerPost(userId, channelId, rootId, spoiler string) *model.Post {
+func (p *Plugin) getSpoilerPost(userID, channelID, rootID, spoiler string) *model.Post {
 	return &model.Post{
-		UserId:    userId,
-		ChannelId: channelId,
+		UserId:    userID,
+		ChannelId: channelID,
 		Type:      customPostType,
-		RootId:    rootId,
+		RootId:    rootID,
 		// The webapp plugin will use the RawMessage for the custom display
 		Props: map[string]interface{}{
 			customPostProp: spoiler,

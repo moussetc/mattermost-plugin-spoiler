@@ -17,9 +17,10 @@ const manifestStr = `
   "description": "This plugin defines a /spoiler command.",
   "homepage_url": "https://github.com/moussetc/mattermost-plugin-spoiler/",
   "support_url": "https://github.com/moussetc/mattermost-plugin-spoiler/issues",
-  "icon_path": "assets/icon.png",
+  "release_notes_url": "https://github.com/moussetc/mattermost-plugin-spoiler/releases/tag/v3.0.0",
+  "icon_path": "assets/icon.svg",
   "version": "3.0.0",
-  "min_server_version": "5.14.0",
+  "min_server_version": "5.26.0",
   "server": {
     "executables": {
       "linux-amd64": "server/dist/plugin-linux-amd64",

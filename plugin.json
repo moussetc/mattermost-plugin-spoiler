@@ -5,7 +5,8 @@
     "version": "3.0.0",
     "homepage_url":"https://github.com/moussetc/mattermost-plugin-spoiler/",
     "support_url":"https://github.com/moussetc/mattermost-plugin-spoiler/issues",
-    "icon_path":"assets/icon.png",
+    "release_notes_url": "https://github.com/moussetc/mattermost-plugin-spoiler/releases/tag/v3.0.0",
+    "icon_path":"assets/icon.svg",
     "server": {
         "executables": {
             "linux-amd64": "server/dist/plugin-linux-amd64",
@@ -14,7 +15,7 @@
         },
         "executable": "server/dist/plugin-freebsd-amd64"
     },
-    "min_server_version": "5.14.0",
+    "min_server_version": "5.26.0",
     "webapp": {
         "bundle_path": "webapp/dist/main.js"
     },

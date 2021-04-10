@@ -67,6 +67,19 @@ func TestExecuteCommand(t *testing.T) {
 	assert.Empty(t, response.ResponseType)
 }
 
+func TestExecuteCommandParseError(t *testing.T) {
+	p := Plugin{}
+
+	command := model.CommandArgs{
+		Command:   "/spoiler \"\"\"",
+		UserId:    "userid",
+		ChannelId: "channelid",
+	}
+	response, err := p.ExecuteCommand(&plugin.Context{}, &command)
+	assert.NotNil(t, err)
+	assert.Nil(t, response)
+}
+
 func TestExecuteCommandErrorOnPost(t *testing.T) {
 	api := &plugintest.API{}
 
@@ -102,26 +115,60 @@ func TestExecuteCommandErrorOnPost(t *testing.T) {
 func TestServeHTTP(t *testing.T) {
 	spoilerMode := "kjqshdlkjhfk"
 	spoiler := "hahahahaha"
+	description := "hohohoho"
 	for name, test := range map[string]struct {
 		RequestURL         string
 		RequestBody        string
 		ExpectedStatusCode int
 		ExpectedHeader     http.Header
 		ExpectedbodyString string
+		ShouldLogError     bool
+		ShouldNotifyError  bool
 	}{
-		"Show spoiler request": {
+		"Show spoiler request with description": {
 			RequestURL:         "/show",
-			RequestBody:        `{"Context":{"spoiler":"` + spoiler + `"}}`,
+			RequestBody:        `{"Context":{"spoiler":"` + spoiler + `","description":"` + description + `"}}`,
+			ExpectedStatusCode: http.StatusOK,
+			ExpectedHeader:     http.Header{"Content-Type": []string{"application/json"}},
+			ExpectedbodyString: `{"update":null,"ephemeral_text":"` + description + "\\n" + spoiler + `","skip_slack_parsing":false}`,
+			ShouldLogError:     false,
+			ShouldNotifyError:  false,
+		},
+		"Show spoiler request without description": {
+			RequestURL:         "/show",
+			RequestBody:        `{"Context":{"spoiler":"` + spoiler + `","description":""}}`,
 			ExpectedStatusCode: http.StatusOK,
 			ExpectedHeader:     http.Header{"Content-Type": []string{"application/json"}},
 			ExpectedbodyString: `{"update":null,"ephemeral_text":"` + spoiler + `","skip_slack_parsing":false}`,
+			ShouldLogError:     false,
+			ShouldNotifyError:  false,
 		},
-		"Show invalid spoiler request": {
+		"Show invalid spoiler request (missing context)": {
 			RequestURL:         "/show",
 			RequestBody:        "",
 			ExpectedStatusCode: http.StatusBadRequest,
 			ExpectedHeader:     http.Header{},
 			ExpectedbodyString: "",
+			ShouldLogError:     true,
+			ShouldNotifyError:  false,
+		},
+		"Show invalid spoiler request (missing context property)": {
+			RequestURL:         "/show",
+			RequestBody:        `{"Context":{"description":""}}`,
+			ExpectedStatusCode: http.StatusBadRequest,
+			ExpectedHeader:     http.Header{},
+			ExpectedbodyString: "",
+			ShouldLogError:     true,
+			ShouldNotifyError:  true,
+		},
+		"Show invalid spoiler request (bad context property value)": {
+			RequestURL:         "/show",
+			RequestBody:        `{"Context":{"spoiler":"` + spoiler + `","description":null}}`,
+			ExpectedStatusCode: http.StatusBadRequest,
+			ExpectedHeader:     http.Header{},
+			ExpectedbodyString: "",
+			ShouldLogError:     true,
+			ShouldNotifyError:  true,
 		},
 		"Config request": {
 			RequestURL:         "/config",
@@ -129,6 +176,8 @@ func TestServeHTTP(t *testing.T) {
 			ExpectedStatusCode: http.StatusOK,
 			ExpectedHeader:     http.Header{"Content-Type": []string{"application/json"}},
 			ExpectedbodyString: `{"spoilerMode":"` + spoilerMode + `"}`,
+			ShouldLogError:     false,
+			ShouldNotifyError:  false,
 		},
 		"InvalidRequestURL": {
 			RequestURL:         "/not_found",
@@ -136,12 +185,20 @@ func TestServeHTTP(t *testing.T) {
 			ExpectedStatusCode: http.StatusNotFound,
 			ExpectedHeader:     http.Header{"Content-Type": []string{"text/plain; charset=utf-8"}, "X-Content-Type-Options": []string{"nosniff"}},
 			ExpectedbodyString: "404 page not found\n",
+			ShouldLogError:     false,
+			ShouldNotifyError:  false,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			assert := assert.New(t)
 
+			api := &plugintest.API{}
+			api.On("SendEphemeralPost", mock.AnythingOfType("string"), mock.AnythingOfType("*model.Post")).Return(nil)
+			api.On("LogWarn", mock.AnythingOfType("string")).Return(nil)
+			api.On("LogWarn", mock.AnythingOfType("string"), mock.AnythingOfType("*model.AppError")).Return(nil)
+
 			plugin := &Plugin{}
+			plugin.SetAPI(api)
 			config := &Configuration{SpoilerMode: spoilerMode}
 			plugin.setConfiguration(config)
 
@@ -159,6 +216,48 @@ func TestServeHTTP(t *testing.T) {
 			assert.Equal(test.ExpectedStatusCode, result.StatusCode)
 			assert.Equal(test.ExpectedbodyString, bodyString)
 			assert.Equal(test.ExpectedHeader, result.Header)
+			if test.ShouldNotifyError {
+				api.AssertCalled(t, "SendEphemeralPost", mock.Anything, mock.Anything)
+			}
+			if test.ShouldLogError {
+				api.AssertCalled(t, "LogWarn", mock.Anything, mock.Anything)
+			}
+		})
+	}
+}
+
+func TestParseCommandeLine(t *testing.T) {
+	testCases := []struct {
+		command             string
+		expectedError       bool
+		expectedSpoiler     string
+		expectedDescription string
+	}{
+		{command: "", expectedError: true, expectedSpoiler: "", expectedDescription: ""},
+		{command: "\"k1 k2 k3", expectedError: true, expectedSpoiler: "", expectedDescription: ""},
+		{command: "k1 k2 k3\"", expectedError: true, expectedSpoiler: "", expectedDescription: ""},
+		{command: "\"k1 k2 k3\" m1 m2 m3", expectedError: false, expectedSpoiler: "m1 m2 m3", expectedDescription: "k1 k2 k3"},
+		{command: "\"k1 k2 k3\" \"m1 m2 m3", expectedError: true, expectedSpoiler: "", expectedDescription: ""},
+		{command: "\"k1 k2 k3\" m1 m2 m3\"", expectedError: true, expectedSpoiler: "", expectedDescription: ""},
+		{command: "\"\" \"m1 m2 m3\"", expectedError: true, expectedSpoiler: "", expectedDescription: ""},
+		{command: "unique", expectedError: false, expectedSpoiler: "unique", expectedDescription: ""},
+		{command: "k1 k2", expectedError: false, expectedSpoiler: "k1 k2", expectedDescription: ""},
+		{command: "\"k1 k2 k3\"", expectedError: false, expectedSpoiler: "k1 k2 k3", expectedDescription: ""},
+		{command: "unique \"m1 m2 m3\"", expectedError: true, expectedSpoiler: "", expectedDescription: ""},
+		{command: "\"k1 k2 k3\" \"m1 m2 m3\"", expectedError: false, expectedSpoiler: "m1 m2 m3", expectedDescription: "k1 k2 k3"},
+		{command: "\"We\nlike\nnew\nlines\" \"yes\nwe\ndo\"", expectedError: false, expectedSpoiler: "yes\nwe\ndo", expectedDescription: "We\nlike\nnew\nlines"},
+		{command: "\"Unicode supporté\\? ça c'est fort\" \"héhéhé !\"", expectedError: false, expectedSpoiler: "héhéhé !", expectedDescription: "Unicode supporté\\? ça c'est fort"},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.command, func(t *testing.T) {
+			description, spoiler, err := parseCommandLine(testCase.command, trigger)
+			if testCase.expectedError {
+				assert.NotNil(t, err)
+			} else {
+				assert.Nil(t, err)
+			}
+			assert.Equal(t, testCase.expectedSpoiler, spoiler)
+			assert.Equal(t, testCase.expectedDescription, description)
 		})
 	}
 }

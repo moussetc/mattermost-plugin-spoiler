@@ -2,11 +2,14 @@ dist: trusty
 sudo: false
 language: go
 go:
-- "1.12.x"
+- "1.14.6"
+before_install:
+  - nvm install 14
+install:
+- curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.24.0
+- make
 after_success:
 - bash <(curl -s https://codecov.io/bash)
-install:
-- make 
 deploy:
   provider: releases
   api_key:
@@ -14,6 +17,7 @@ deploy:
   file: dist/*
   file_glob: true
   skip_cleanup: true
+  draft: true
   on:
     repo: moussetc/mattermost-plugin-spoiler
     tags: true

@@ -1,4 +1,4 @@
-# Mattermost SPOILER Plugin [![Build Status](https://api.travis-ci.com/moussetc/mattermost-plugin-spoiler.svg?branch=master)](https://travis-ci.com/moussetc/mattermost-plugin-spoiler)
+# Mattermost SPOILER Plugin [![Build CI](https://github.com/moussetc/mattermost-plugin-spoiler/actions/workflows/main.yml/badge.svg)](https://github.com/moussetc/mattermost-plugin-spoiler/actions/workflows/main.yml)
 
 **Maintainer:** [@moussetc](https://github.com/moussetc)
 

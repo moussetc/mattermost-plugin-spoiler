@@ -20,7 +20,7 @@ const manifestStr = `
   "release_notes_url": "https://github.com/moussetc/mattermost-plugin-spoiler/releases/tag/v3.0.0",
   "icon_path": "assets/icon.svg",
   "version": "3.0.0",
-  "min_server_version": "5.33.1",
+  "min_server_version": "5.39.0",
   "server": {
     "executables": {
       "linux-amd64": "server/dist/plugin-linux-amd64",

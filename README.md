@@ -22,7 +22,7 @@ Use the following table to find the correct plugin version for each Mattermost s
 
 | Mattermost server | Plugin release | Incompatibility |
 | --- | --- | --- |
-| 5.33.1 and higher | v3.1.x | security fixes |
+| 5.39.0 and higher | v3.1.x | security fixes (upgrading dependencies) |
 | 5.14 to 5.25 | v3.x.x | relative integration URLs |
 | 5.3 to 5.13 | v2.x.x | |
 | below | *not supported* |  plugins can't create slash commands |

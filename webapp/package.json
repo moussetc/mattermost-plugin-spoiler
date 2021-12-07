@@ -25,6 +25,7 @@
     "@babel/runtime": "7.14.8",
     "@emotion/babel-preset-css-prop": "10.0.27",
     "@emotion/core": "10.0.28",
+    "@testing-library/jest-dom": "5.16.1",
     "@types/enzyme": "3.10.8",
     "@types/jest": "26.0.24",
     "@types/node": "16.3.1",
@@ -41,6 +42,9 @@
     "babel-plugin-typescript-to-proptypes": "1.4.2",
     "core-js": "3.15.2",
     "css-loader": "5.2.6",
+    "enzyme": "3.11.0",
+    "enzyme-adapter-react-16": "1.15.6",
+    "enzyme-to-json": "3.6.2",
     "eslint": "7.29.0",
     "eslint-import-resolver-webpack": "0.13.1",
     "eslint-plugin-import": "2.23.4",
@@ -48,12 +52,15 @@
     "eslint-plugin-react-hooks": "4.0.8",
     "file-loader": "6.2.0",
     "identity-obj-proxy": "3.0.0",
+    "isomorphic-fetch": "3.0.0",
     "jest": "27.0.6",
     "jest-canvas-mock": "2.3.1",
+    "jest-dom": "4.0.0",
     "jest-junit": "13.0.0",
     "mattermost-webapp": "github:mattermost/mattermost-webapp#a39d1ac73c4c12407a81d491a54349ce5a55f53f",
-    "sass": "1.35.1",
+    "react": "16.13.1",
     "regenerator-runtime": "0.13.7",
+    "sass": "1.35.1",
     "sass-loader": "12.1.0",
     "style-loader": "3.0.0",
     "webpack": "5.41.1",
@@ -69,7 +76,7 @@
   },
   "jest": {
     "snapshotSerializers": [
-      "<rootDir>/node_modules/enzyme-to-json/serializer"
+      "enzyme-to-json/serializer"
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",
@@ -107,6 +114,7 @@
     "setupFilesAfterEnv": [
       "<rootDir>/tests/setup.tsx"
     ],
+    "testEnvironment": "jsdom",
     "testURL": "http://localhost:8065"
   }
 }

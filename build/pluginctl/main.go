@@ -95,6 +95,7 @@ func getClient() (*model.Client4, error) {
 		if resp.Error != nil {
 			return nil, fmt.Errorf("failed to login as %s: %w", adminUsername, resp.Error)
 		}
+
 		return client, nil
 	}
 

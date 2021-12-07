@@ -6,12 +6,14 @@ linters-settings:
   gofmt:
     simplify: true
   goimports:
-    local-prefixes: github.com/mattermost/mattermost-starter-template
+    local-prefixes: github.com/moussetc/mattermost-plugin-spoiler
   golint:
     min-confidence: 0
   govet:
     check-shadowing: true
     enable-all: true
+    disable:
+      - fieldalignment
   misspell:
     locale: US
 

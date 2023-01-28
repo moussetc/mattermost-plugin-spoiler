@@ -8,6 +8,8 @@ GO_TEST_FLAGS ?= -race
 GO_BUILD_FLAGS ?=
 MM_UTILITIES_DIR ?= ../mattermost-utilities
 DLV_DEBUG_PORT := 2346
+DEFAULT_GOOS := $(shell go env GOOS)
+DEFAULT_GOARCH := $(shell go env GOARCH)
 
 export GO111MODULE=on
 
@@ -33,7 +35,7 @@ endif
 .PHONY: all
 all: check-style test dist
 
-## Runs eslint
+## Runs eslint and golangci-lint
 .PHONY: check-style
 check-style: webapp/node_modules
 	@echo Checking for style guide compliance
@@ -43,23 +45,46 @@ ifneq ($(HAS_WEBAPP),)
 	cd webapp && npm run check-types
 endif
 
-## Builds the server, if it exists, for all supported architectures.
+ifneq ($(HAS_SERVER),)
+	@if ! [ -x "$$(command -v golangci-lint)" ]; then \
+		echo "golangci-lint is not installed. Please see https://github.com/golangci/golangci-lint#install for installation instructions."; \
+		exit 1; \
+	fi; \
+
+	@echo Running golangci-lint
+	golangci-lint run ./...
+endif
+
+## Builds the server, if it exists, for all supported architectures, unless MM_SERVICESETTINGS_ENABLEDEVELOPER is set.
 .PHONY: server
 server:
 ifneq ($(HAS_SERVER),)
 	mkdir -p server/dist;
 ifeq ($(MM_DEBUG),)
-	cd server && env GOOS=linux GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-linux-amd64;
-	cd server && env GOOS=darwin GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-darwin-amd64;
-	cd server && env GOOS=windows GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-windows-amd64.exe;
-	cd server && env GOOS=freebsd GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-freebsd-amd64.exe;
+ifneq ($(MM_SERVICESETTINGS_ENABLEDEVELOPER),)
+	@echo Building plugin only for $(DEFAULT_GOOS)-$(DEFAULT_GOARCH) because MM_SERVICESETTINGS_ENABLEDEVELOPER is enabled
+	cd server && CGO_ENABLED=0 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-$(DEFAULT_GOOS)-$(DEFAULT_GOARCH);
+else
+	cd server && env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-linux-amd64;
+	cd server && env CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-linux-arm64;
+	cd server && env CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-darwin-amd64;
+	cd server && env CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-darwin-arm64;
+	cd server && env CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-windows-amd64.exe;
+	cd server && env CGO_ENABLED=0 GGOOS=freebsd GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -o dist/plugin-freebsd-amd64.exe;
+endif
 else
 	$(info DEBUG mode is on; to disable, unset MM_DEBUG)
-
-	cd server && env GOOS=linux GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -gcflags "all=-N -l" -o dist/plugin-linux-amd64;
-	cd server && env GOOS=darwin GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -gcflags "all=-N -l" -o dist/plugin-darwin-amd64;
-	cd server && env GOOS=windows GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -gcflags "all=-N -l" -o dist/plugin-windows-amd64.exe;
-	cd server && env GOOS=freebsd GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -trimpath -gcflags "all=-N -l" -o dist/plugin-freebsd-amd64.exe;
+ifneq ($(MM_SERVICESETTINGS_ENABLEDEVELOPER),)
+	@echo Building plugin only for $(DEFAULT_GOOS)-$(DEFAULT_GOARCH) because MM_SERVICESETTINGS_ENABLEDEVELOPER is enabled
+	cd server && CGO_ENABLED=0 $(GO) build $(GO_BUILD_FLAGS) -gcflags "all=-N -l" -trimpath -o dist/plugin-$(DEFAULT_GOOS)-$(DEFAULT_GOARCH);
+else
+	cd server && env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -gcflags "all=-N -l" -trimpath -o dist/plugin-linux-amd64;
+	cd server && env CGO_ENABLED=0 GOOS=linux GOARCH=arm64 $(GO) build $(GO_BUILD_FLAGS) -gcflags "all=-N -l" -trimpath -o dist/plugin-linux-arm64;
+	cd server && env CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -gcflags "all=-N -l" -trimpath -o dist/plugin-darwin-amd64;
+	cd server && env CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 $(GO) build $(GO_BUILD_FLAGS) -gcflags "all=-N -l" -trimpath -o dist/plugin-darwin-arm64;
+	cd server && env CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -gcflags "all=-N -l" -trimpath -o dist/plugin-windows-amd64.exe;
+	cd server && env CGO_ENABLED=0 GOOS=freebsd GOARCH=amd64 $(GO) build $(GO_BUILD_FLAGS) -gcflags "all=-N -l" -trimpath -o dist/plugin-freebsd-amd64.exe;
+endif
 endif
 endif
 

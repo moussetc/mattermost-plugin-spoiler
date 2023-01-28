@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -18,10 +18,6 @@ import (
 
 func TestExecuteCommand(t *testing.T) {
 	api := &plugintest.API{}
-
-	manifest = &model.Manifest{
-		Id: "testId",
-	}
 
 	var post *model.Post
 	api.On("RegisterCommand", mock.Anything).Return(nil)
@@ -152,7 +148,7 @@ func TestServeHTTP(t *testing.T) {
 			result := w.Result()
 			require.NotNil(t, result)
 
-			bodyBytes, err := ioutil.ReadAll(result.Body)
+			bodyBytes, err := io.ReadAll(result.Body)
 			require.Nil(t, err)
 			bodyString := string(bodyBytes)
 

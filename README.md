@@ -56,7 +56,14 @@ If you are running Mattermost v5.11 or earlier in [High Availability mode](https
 
 ## Development
 
-To avoid having to manually install your plugin, build and deploy your plugin using one of the following options.
+To avoid having to manually install your plugin, build and deploy your plugin using one of the following options. In order for the below options to work, you must first enable plugin uploads via your config.json or API and restart Mattermost.
+
+```json
+    "PluginSettings" : {
+        ...
+        "EnableUploads" : true
+    }
+```
 
 ### Deploying with Local Mode
 
@@ -68,7 +75,7 @@ If your Mattermost server is running locally, you can enable [local mode](https:
         ...
         "EnableLocalMode": true,
         "LocalModeSocketLocation": "/var/tmp/mattermost_local.socket"
-    }
+    },
 }
 ```
 
@@ -88,6 +95,12 @@ If developing a plugin with a webapp, watch for changes and deploy those automat
 export MM_SERVICESETTINGS_SITEURL=http://localhost:8065
 export MM_ADMIN_TOKEN=j44acwd8obn78cdcx7koid4jkr
 make watch
+```
+
+To speed up development, you can also set the following to only build for your current architecture:
+```
+MM_DEBUG=true
+MM_SERVICESETTINGS_ENABLEDEVELOPER=true
 ```
 
 ### Deploying with credentials

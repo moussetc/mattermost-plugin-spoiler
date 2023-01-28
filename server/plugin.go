@@ -6,6 +6,8 @@ import (
 	"strings"
 	"sync"
 
+	manifest "github.com/moussetc/mattermost-plugin-spoiler"
+
 	"github.com/mattermost/mattermost-server/v5/model"
 	"github.com/mattermost/mattermost-server/v5/plugin"
 )
@@ -86,7 +88,7 @@ func (p *Plugin) getPostAttachments(spoilerText string) []*model.SlackAttachment
 		Name: "Show spoiler",
 		Type: model.POST_ACTION_TYPE_BUTTON,
 		Integration: &model.PostActionIntegration{
-			URL:     fmt.Sprintf("/plugins/%s/show", manifest.Id),
+			URL:     fmt.Sprintf("/plugins/%s/show", manifest.Manifest.Id),
 			Context: model.StringInterface{"spoiler": spoilerText},
 		},
 	},

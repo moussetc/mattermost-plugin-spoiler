@@ -43,7 +43,7 @@ func (p *Plugin) OnActivate() error {
 }
 
 // ServeHTTP serve the post action to display an ephemeral spoiler
-func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
+func (p *Plugin) ServeHTTP(_ *plugin.Context, w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/show":
 		p.showEphemeral(w, r)
@@ -55,7 +55,7 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 }
 
 // ExecuteCommand post a custom-type spoiler post, the webapp part of the plugin will display it right
-func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
+func (p *Plugin) ExecuteCommand(_ *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
 	rawText := strings.TrimSpace((strings.Replace(args.Command, "/"+trigger, "", 1)))
 
 	// A slash command can not return a post with a custom type

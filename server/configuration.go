@@ -74,7 +74,7 @@ func (p *Plugin) OnConfigurationChange() error {
 }
 
 // handleConfigRequest answers a HTTP request for the plugin's configuration
-func (p *Plugin) handleConfigRequest(w http.ResponseWriter, r *http.Request) {
+func (p *Plugin) handleConfigRequest(w http.ResponseWriter, _ *http.Request) {
 	configuration := p.getConfiguration()
 	var response = struct {
 		SpoilerMode string `json:"spoilerMode"`

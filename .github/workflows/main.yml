@@ -33,7 +33,6 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version-file: 'go.mod'
-        stable: true
 
     - name: Install golangci-lint
       uses: golangci/golangci-lint-action@v2

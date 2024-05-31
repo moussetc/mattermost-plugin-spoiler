@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 
 export interface PluginRegistry {
@@ -7,7 +8,7 @@ export interface PluginRegistry {
 
     unregisterComponent(componentId: string);
 
-    registerWebSocketEventHandler(event, handler);
+    registerWebSocketEventHandler(event: string, handler: (msg: any) => void)
 
     registerReconnectHandler(handler);
 

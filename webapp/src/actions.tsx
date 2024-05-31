@@ -7,6 +7,7 @@ import {GlobalState} from 'mattermost-redux/types/store';
 import manifest from './manifest';
 import {PLUGIN_CONFIG_CHANGE} from './action_types';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const pluginConfigChange = (message: any) => (dispatch: Dispatch) => dispatch({
     type: PLUGIN_CONFIG_CHANGE,
     data: message.data,

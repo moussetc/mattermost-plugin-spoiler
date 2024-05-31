@@ -13,8 +13,9 @@
       "experimentalObjectRestSpread": true
     }
   },
-  "parser": "@babel/eslint-parser",
+  "parser": "@typescript-eslint/parser",
   "plugins": [
+    "@typescript-eslint",
     "react",
     "import"
   ],
@@ -35,7 +36,18 @@
     "beforeEach": true
   },
   "settings": {
-    "import/resolver": "webpack"
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        //"project": ["tsconfig.json"],
+        "alwaysTryTypes": true // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
+      }
+    },
+    "react": {
+      "version": "detect"
+    }
   },
   "rules": {
     "array-bracket-spacing": [
@@ -63,6 +75,7 @@
         "allowSingleLine": false
       }
     ],
+    "camelcase": 0,
     "capitalized-comments": 0,
     "class-methods-use-this": 0,
     "comma-dangle": [
@@ -266,19 +279,7 @@
     "no-lone-blocks": 2,
     "no-lonely-if": 2,
     "no-loop-func": 2,
-    "no-magic-numbers": [
-      0,
-      {
-        "ignore": [
-          -1,
-          0,
-          1,
-          2
-        ],
-        "enforceConst": true,
-        "detectObjects": true
-      }
-    ],
+    "no-magic-numbers": "off",
     "no-mixed-operators": [
       2,
       {
@@ -371,14 +372,7 @@
         "args": "after-used"
       }
     ],
-    "no-use-before-define": [
-      2,
-      {
-        "classes": false,
-        "functions": false,
-        "variables": false
-      }
-    ],
+    "no-use-before-define": "off",
     "no-useless-computed-key": 2,
     "no-useless-concat": 2,
     "no-useless-constructor": 2,
@@ -545,7 +539,7 @@
       }
     ],
     "react/prefer-es6-class": 2,
-    "react/prefer-stateless-function": 2,
+    "react/prefer-stateless-function": 0,
     "react/prop-types": [
       2,
       {
@@ -632,8 +626,14 @@
   },
   "overrides": [
     {
-      "files": ["**/*.tsx", "**/*.ts"],
-      "extends": "plugin:@typescript-eslint/recommended",
+      "files": [
+        "**/*.tsx",
+        "**/*.ts"
+      ],
+      "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/typescript"
+      ],
       "rules": {
         "@typescript-eslint/ban-ts-ignore": 0,
         "@typescript-eslint/ban-types": 1,
@@ -660,7 +660,10 @@
         "react/jsx-filename-extension": [
           1,
           {
-            "extensions": [".jsx", ".tsx"]
+            "extensions": [
+              ".jsx",
+              ".tsx"
+            ]
           }
         ]
       }

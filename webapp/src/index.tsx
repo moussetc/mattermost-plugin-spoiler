@@ -1,10 +1,8 @@
 import {Store, Action} from 'redux';
 
-import {PluginRegistry} from '@/types/mattermost-webapp';
+import {GlobalState} from 'mattermost-redux/types/store';
 
-import {GlobalState} from '@mattermost/types/lib/store';
-
-import manifest from '@/manifest';
+import {PluginRegistry} from 'types/mattermost-webapp';
 
 import SpoilerPostType from './components/spoiler_post_type';
 import {
@@ -13,10 +11,9 @@ import {
 } from './actions';
 import {spoilerMode} from './selectors';
 import reducer from './reducer';
-
+import manifest from './manifest';
 
 export default class Plugin {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
     public async initialize(registry: PluginRegistry, store: Store<GlobalState, Action<Record<string, unknown>>>) {
         // @see https://developers.mattermost.com/extend/plugins/webapp/reference/
         registry.registerReducer(reducer);
@@ -45,6 +42,7 @@ export default class Plugin {
         // Be alerted if the plugin configuration change
         registry.registerWebSocketEventHandler(
             'custom_' + manifest.id + '_config_change',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (message: any) => pluginConfigChange(message)(store.dispatch),
         );
 

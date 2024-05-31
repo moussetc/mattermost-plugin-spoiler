@@ -8,7 +8,7 @@ export default class SpoilerPostType extends React.PureComponent {
         post: PropTypes.object.isRequired,
         theme: PropTypes.object.isRequired,
         spoilerMode: PropTypes.string.isRequired,
-    }
+    };
 
     constructor(props) {
         super(props);

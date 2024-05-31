@@ -1,6 +1,10 @@
 import {Store, Action} from 'redux';
 
-import {GlobalState} from 'mattermost-redux/types/store';
+import {PluginRegistry} from '@/types/mattermost-webapp';
+
+import {GlobalState} from '@mattermost/types/lib/store';
+
+import manifest from '@/manifest';
 
 import SpoilerPostType from './components/spoiler_post_type';
 import {
@@ -9,10 +13,7 @@ import {
 } from './actions';
 import {spoilerMode} from './selectors';
 import reducer from './reducer';
-import manifest from './manifest';
 
-// eslint-disable-next-line import/no-unresolved
-import {PluginRegistry} from './types/mattermost-webapp';
 
 export default class Plugin {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function

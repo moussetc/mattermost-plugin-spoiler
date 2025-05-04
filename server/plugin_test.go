@@ -158,3 +158,39 @@ func TestServeHTTP(t *testing.T) {
 		})
 	}
 }
+
+func TestParseCommandLine(t *testing.T) {
+	testCases := []struct {
+		command         string
+		expectedError   bool
+		expectedSpoiler string
+		expectedCaption string
+	}{
+		// True errors (not a lot, we are very lenient)
+		{command: "", expectedError: true, expectedSpoiler: "", expectedCaption: ""},
+		// Typos that will cause the whole message to be considered as a spoiler
+		{command: "\"missing closing quote", expectedError: false, expectedSpoiler: "missing closing quote", expectedCaption: ""},
+		{command: "missing opening quote\" spoiler", expectedError: false, expectedSpoiler: "missing opening quote\" spoiler", expectedCaption: ""},
+		{command: "\"caption without spoiler\"", expectedError: false, expectedSpoiler: "caption without spoiler", expectedCaption: ""},
+		// Fully correct commands
+		{command: "spoiler without caption", expectedError: false, expectedSpoiler: "spoiler without caption", expectedCaption: ""},
+		{command: "\"caption\" spoiler", expectedError: false, expectedSpoiler: "spoiler", expectedCaption: "caption"},
+		{command: "\"caption\" \"spoiler\"", expectedError: false, expectedSpoiler: "spoiler", expectedCaption: "caption"},
+		{command: "\"caption\" spoiler", expectedError: false, expectedSpoiler: "spoiler", expectedCaption: "caption"},
+		{command: "\"caption with \\\"escaped quote\\\"!\" spoiler", expectedError: false, expectedSpoiler: "spoiler", expectedCaption: "caption with \\\"escaped quote\\\"!"},
+		{command: "\"We\nlike\nnew\nlines\" yes\nwe\ndo", expectedError: false, expectedSpoiler: "yes\nwe\ndo", expectedCaption: "We\nlike\nnew\nlines"},
+		{command: "\"Unicode supporté? 👍\" héhéhé 👍!", expectedError: false, expectedSpoiler: "héhéhé 👍!", expectedCaption: "Unicode supporté? 👍"},
+		{command: "\"Caption inside (link)[https://test.com]?\" Spoiler inside (link)[https://test.com]?", expectedError: false, expectedSpoiler: "Spoiler inside (link)[https://test.com]?", expectedCaption: "Caption inside (link)[https://test.com]?"},
+	}
+	for _, testCase := range testCases {
+		keywords, caption, err := parseCommandLine("/spoiler " + testCase.command)
+
+		if testCase.expectedError {
+			assert.NotNil(t, err, "Testing: "+testCase.command)
+		} else {
+			assert.Nil(t, err, "Testing: "+testCase.command)
+		}
+		assert.Equal(t, testCase.expectedSpoiler, keywords, "Testing: "+testCase.command)
+		assert.Equal(t, testCase.expectedCaption, caption, "Testing: "+testCase.command)
+	}
+}

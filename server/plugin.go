@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -39,8 +40,8 @@ func (p *Plugin) OnActivate() error {
 		Description:      "Hide a message that contains a spoiler",
 		DisplayName:      "Spoiler",
 		AutoComplete:     true,
-		AutoCompleteDesc: "Hide a spoiler message",
-		AutoCompleteHint: "The Titanic sinks at the end.",
+		AutoCompleteDesc: "Hide a spoiler message.\nCareful, file attachments will not be spoilered, use inline images instead!",
+		AutoCompleteHint: getHintMessage(),
 	})
 }
 
@@ -58,12 +59,14 @@ func (p *Plugin) ServeHTTP(_ *plugin.Context, w http.ResponseWriter, r *http.Req
 
 // ExecuteCommand post a custom-type spoiler post, the webapp part of the plugin will display it right
 func (p *Plugin) ExecuteCommand(_ *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
-	rawText := strings.TrimSpace((strings.Replace(args.Command, "/"+trigger, "", 1)))
-
+	spoiler, caption, parseErr := parseCommandLine(args.Command)
+	if parseErr != nil {
+		return nil, parseErr
+	}
 	// A slash command can not return a post with a custom type
 	// so the spoiler post is created manually and the command
 	// response is to do nothing
-	_, err := p.API.CreatePost(p.getSpoilerPost(args.UserId, args.ChannelId, args.RootId, rawText))
+	_, err := p.API.CreatePost(p.getSpoilerPost(args.UserId, args.ChannelId, args.RootId, spoiler, caption))
 	if err != nil {
 		return nil, err
 	}
@@ -71,12 +74,30 @@ func (p *Plugin) ExecuteCommand(_ *plugin.Context, args *model.CommandArgs) (*mo
 	return &model.CommandResponse{}, nil
 }
 
-func (p *Plugin) getSpoilerPost(userID, channelID, rootID, spoiler string) *model.Post {
+func parseCommandLine(commandLine string) (spoiler, caption string, err *model.AppError) {
+	reg := regexp.MustCompile(`(?sm)^(\s*\"(?P<caption>(\s*(\\\"|[^\s\"])+\s*)+)\")?\s*\"?(?P<spoiler>.+)\"?$`)
+	matchIndexes := reg.FindStringSubmatch(strings.TrimSpace(strings.Replace(commandLine, "/spoiler", "", 1)))
+	if matchIndexes == nil {
+		return "", "", &model.AppError{Message: fmt.Sprintf("could not read the command, try one of the following syntax: /spoiler %s", getHintMessage())}
+	}
+	results := make(map[string]string)
+	for i, name := range reg.SubexpNames() {
+		results[name] = matchIndexes[i]
+	}
+	return strings.Trim(strings.TrimSpace(results["spoiler"]), "\""), strings.Trim(strings.TrimSpace(results["caption"]), "\""), nil
+}
+
+func getHintMessage() string {
+	return "my spoiler content, or /spoiler \"Visible spoiler caption\" Hidden spoiler content..."
+}
+
+func (p *Plugin) getSpoilerPost(userID, channelID, rootID, spoiler, caption string) *model.Post {
 	return &model.Post{
 		UserId:    userID,
 		ChannelId: channelID,
 		Type:      customPostType,
 		RootId:    rootID,
+		Message:   caption,
 		// The webapp plugin will use the RawMessage for the custom display
 		Props: map[string]interface{}{
 			customPostProp: spoiler,

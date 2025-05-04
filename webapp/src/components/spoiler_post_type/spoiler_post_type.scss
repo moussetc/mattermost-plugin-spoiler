@@ -1,0 +1,32 @@
+.spoiler-content {
+
+  &:not(.reveal-spoiler) {
+    display: inline-block;
+    cursor: pointer;
+    color: transparent;
+    user-select: none;
+
+    & * {
+      border-radius: 4px;
+      background-color: var(--center-channel-color);
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      border: none;
+    }
+
+    // Disable event for elements like the code block copy button
+    & > * {
+      pointer-events: none;
+    }
+
+    // Avoid having unwanted elements showing
+    table, a, img, code, br {
+      opacity: 0;
+    }
+
+    // Get background only around the words, not as a full-line rectangle
+    p {
+      display: inline;
+    }
+  }
+}

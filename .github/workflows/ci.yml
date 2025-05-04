@@ -20,10 +20,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: npm
@@ -35,15 +35,13 @@ jobs:
         go-version-file: 'go.mod'
 
     - name: Install golangci-lint
-      uses: golangci/golangci-lint-action@v2
-      with:
-        skip-go-installation: true
+      uses: golangci/golangci-lint-action@v7
 
     - name: Build
       run: make
 
     - name: Publish
       if: github.event_name == 'release'
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: dist/*

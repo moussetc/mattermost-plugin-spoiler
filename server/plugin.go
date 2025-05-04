@@ -1,15 +1,17 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 	"sync"
 
 	manifest "github.com/moussetc/mattermost-plugin-spoiler"
 
-	"github.com/mattermost/mattermost-server/v5/model"
-	"github.com/mattermost/mattermost-server/v5/plugin"
+	"github.com/mattermost/mattermost/server/public/model"
+	"github.com/mattermost/mattermost/server/public/plugin"
 )
 
 // Plugin that adds a slash command to hide spoilers
@@ -86,7 +88,7 @@ func (p *Plugin) getSpoilerPost(userID, channelID, rootID, spoiler string) *mode
 func (p *Plugin) getPostAttachments(spoilerText string) []*model.SlackAttachment {
 	actions := []*model.PostAction{{
 		Name: "Show spoiler",
-		Type: model.POST_ACTION_TYPE_BUTTON,
+		Type: model.PostActionTypeButton,
 		Integration: &model.PostActionIntegration{
 			URL:     fmt.Sprintf("/plugins/%s/show", manifest.Manifest.Id),
 			Context: model.StringInterface{"spoiler": spoilerText},
@@ -101,15 +103,25 @@ func (p *Plugin) getPostAttachments(spoilerText string) []*model.SlackAttachment
 
 // Show spoiler content as an ephemeral message
 func (p *Plugin) showEphemeral(w http.ResponseWriter, r *http.Request) {
-	request := model.PostActionIntegrationRequestFromJson(r.Body)
-	if request == nil || request.Context == nil {
+	body, readErr := io.ReadAll(r.Body)
+	if readErr != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	var request model.PostActionIntegrationRequest
+	jsonErr := json.Unmarshal(body, &request)
+	if jsonErr != nil || request.Context == nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	response := &model.PostActionIntegrationResponse{
 		EphemeralText: request.Context["spoiler"].(string),
 	}
 	w.Header().Set("Content-Type", "application/json")
+	json, jsonErr := json.Marshal(response)
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(response.ToJson())
+	if jsonErr == nil {
+		_, _ = w.Write(json)
+	}
 }

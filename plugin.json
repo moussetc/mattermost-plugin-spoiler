@@ -15,7 +15,7 @@
         },
         "executable": "server/dist/plugin-freebsd-amd64"
     },
-    "min_server_version": "5.39.0",
+    "min_server_version": "6.5.0",
     "webapp": {
         "bundle_path": "webapp/dist/main.js"
     },

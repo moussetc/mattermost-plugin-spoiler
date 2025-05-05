@@ -27,7 +27,7 @@ Use the following table to find the correct plugin version for each Mattermost s
 
 | Mattermost server | Plugin release | Incompatibility |
 | --- | --- | --- |
-| 6.5 and higher | v3.2.x and higher | breaking plugin API changes |
+| 6.5 and higher | v4.0.x and higher | breaking plugin API changes |
 | 5.39.0 and higher | v3.1.x | security fixes (upgrading dependencies) |
 | 5.14 to 5.25 | v3.x.x | relative integration URLs |
 | 5.3 to 5.13 | v2.x.x | |

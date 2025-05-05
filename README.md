@@ -1,4 +1,4 @@
-# Mattermost SPOILER Plugin [![Build CI](https://github.com/moussetc/mattermost-plugin-spoiler/actions/workflows/main.yml/badge.svg)](https://github.com/moussetc/mattermost-plugin-spoiler/actions/workflows/main.yml)
+# Mattermost Spoiler Plugin [![Build CI](https://github.com/moussetc/mattermost-plugin-spoiler/actions/workflows/main.yml/badge.svg)](https://github.com/moussetc/mattermost-plugin-spoiler/actions/workflows/main.yml)
 
 **Maintainer:** [@moussetc](https://github.com/moussetc)
 
@@ -6,7 +6,7 @@ This plugin creates a slash command to display spoiler messages in a non-spoilin
 
 ## Usage
 
-Type `/spoiler` followed by your spoiler, then post your message. (The spoiler can be on more than one line, it can contain emojis, URLs, images, etc. All will be hidden.)
+Type `/spoiler` followed by your spoiler, then post your message. The spoiler can be on more than one line, it can contain emojis, URLs, inline images, etc., they will be hidden . You can also add some context to your spoiler that will be always visible, by writing `/spoiler "Visible spoiler caption" Hidden spoiler content`.
 
 Two display modes are available for spoiler messages:
 - **Spoiler button** mode:  
@@ -14,7 +14,12 @@ Two display modes are available for spoiler messages:
 
 - **Redacted** mode:  
 ![Redacted spoiler demo](assets/demo_redacted.gif)  
-***This mode is not available on native apps like Android.*** Native apps do not yet support plugin customization, so for now they will use the *Spoiler button* mode.
+***This mode is not available on native apps like Android.*** Native apps do not support UI customization, so for now they will use the *Spoiler button* mode.
+
+> [!WARNING]  
+> Plugin limitations: 
+> - File attachments cannot be hidden, use inline images instead!
+> - spoiler content cannot be edited once it's posted
 
 ## Compatibility
 
@@ -123,4 +128,4 @@ make deploy
 
 ## How do I share feedback on this plugin?
 
-Feel free to create a GitHub issue or to contact me at `@cmousset` on the [community Mattermost instance](https://pre-release.mattermost.com/) to discuss.
+Feel free to create a GitHub issue or to contact me at `@cmousset` on the [community Mattermost instance](https://mattermost.com/community/) to discuss.
